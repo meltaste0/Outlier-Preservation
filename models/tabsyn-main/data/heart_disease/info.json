@@ -1,0 +1,238 @@
+{
+    "name": "heart_disease",
+    "task_type": "binclass",
+    "header": "infer",
+    "column_names": [
+        "HighBP",
+        "HighChol",
+        "CholCheck",
+        "BMI",
+        "Smoker",
+        "Stroke",
+        "Diabetes",
+        "PhysActivity",
+        "Fruits",
+        "Veggies",
+        "HvyAlcoholConsump",
+        "AnyHealthcare",
+        "NoDocbcCost",
+        "GenHlth",
+        "MentHlth",
+        "PhysHlth",
+        "DiffWalk",
+        "Sex",
+        "Age",
+        "Education",
+        "Income",
+        "HeartDiseaseorAttack"
+    ],
+    "num_col_idx": [
+        3,
+        14,
+        15
+    ],
+    "cat_col_idx": [
+        0,
+        1,
+        2,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        16,
+        17,
+        18,
+        19,
+        20
+    ],
+    "target_col_idx": [
+        21
+    ],
+    "file_type": "csv",
+    "data_path": "../../Datasets/Heart Disease/heart_disease_cleaned.csv",
+    "test_path": null,
+    "column_info": {
+        "3": {},
+        "type": "categorical",
+        "max": 30.0,
+        "min": 0.0,
+        "14": {},
+        "15": {},
+        "0": {},
+        "categorizes": [
+            0.0,
+            1.0
+        ],
+        "1": {},
+        "2": {},
+        "4": {},
+        "5": {},
+        "6": {},
+        "7": {},
+        "8": {},
+        "9": {},
+        "10": {},
+        "11": {},
+        "12": {},
+        "13": {},
+        "16": {},
+        "17": {},
+        "18": {},
+        "19": {},
+        "20": {},
+        "21": {}
+    },
+    "train_num": 228312,
+    "test_num": 25368,
+    "idx_mapping": {
+        "0": 3,
+        "1": 4,
+        "2": 5,
+        "3": 0,
+        "4": 6,
+        "5": 7,
+        "6": 8,
+        "7": 9,
+        "8": 10,
+        "9": 11,
+        "10": 12,
+        "11": 13,
+        "12": 14,
+        "13": 15,
+        "14": 1,
+        "15": 2,
+        "16": 16,
+        "17": 17,
+        "18": 18,
+        "19": 19,
+        "20": 20,
+        "21": 21
+    },
+    "inverse_idx_mapping": {
+        "3": 0,
+        "4": 1,
+        "5": 2,
+        "0": 3,
+        "6": 4,
+        "7": 5,
+        "8": 6,
+        "9": 7,
+        "10": 8,
+        "11": 9,
+        "12": 10,
+        "13": 11,
+        "14": 12,
+        "15": 13,
+        "1": 14,
+        "2": 15,
+        "16": 16,
+        "17": 17,
+        "18": 18,
+        "19": 19,
+        "20": 20,
+        "21": 21
+    },
+    "idx_name_mapping": {
+        "0": "HighBP",
+        "1": "HighChol",
+        "2": "CholCheck",
+        "3": "BMI",
+        "4": "Smoker",
+        "5": "Stroke",
+        "6": "Diabetes",
+        "7": "PhysActivity",
+        "8": "Fruits",
+        "9": "Veggies",
+        "10": "HvyAlcoholConsump",
+        "11": "AnyHealthcare",
+        "12": "NoDocbcCost",
+        "13": "GenHlth",
+        "14": "MentHlth",
+        "15": "PhysHlth",
+        "16": "DiffWalk",
+        "17": "Sex",
+        "18": "Age",
+        "19": "Education",
+        "20": "Income",
+        "21": "HeartDiseaseorAttack"
+    },
+    "metadata": {
+        "columns": {
+            "3": {
+                "sdtype": "numerical",
+                "computer_representation": "Float"
+            },
+            "14": {
+                "sdtype": "numerical",
+                "computer_representation": "Float"
+            },
+            "15": {
+                "sdtype": "numerical",
+                "computer_representation": "Float"
+            },
+            "0": {
+                "sdtype": "categorical"
+            },
+            "1": {
+                "sdtype": "categorical"
+            },
+            "2": {
+                "sdtype": "categorical"
+            },
+            "4": {
+                "sdtype": "categorical"
+            },
+            "5": {
+                "sdtype": "categorical"
+            },
+            "6": {
+                "sdtype": "categorical"
+            },
+            "7": {
+                "sdtype": "categorical"
+            },
+            "8": {
+                "sdtype": "categorical"
+            },
+            "9": {
+                "sdtype": "categorical"
+            },
+            "10": {
+                "sdtype": "categorical"
+            },
+            "11": {
+                "sdtype": "categorical"
+            },
+            "12": {
+                "sdtype": "categorical"
+            },
+            "13": {
+                "sdtype": "categorical"
+            },
+            "16": {
+                "sdtype": "categorical"
+            },
+            "17": {
+                "sdtype": "categorical"
+            },
+            "18": {
+                "sdtype": "categorical"
+            },
+            "19": {
+                "sdtype": "categorical"
+            },
+            "20": {
+                "sdtype": "categorical"
+            },
+            "21": {
+                "sdtype": "categorical"
+            }
+        }
+    }
+}

@@ -99,7 +99,8 @@ def main(args):
         train_data,
         batch_size = batch_size,
         shuffle = True,
-        num_workers = 4,
+        # Use single-process loading by default for better Windows stability.
+        num_workers = 0,
     )
 
     model = Model_VAE(NUM_LAYERS, d_numerical, categories, D_TOKEN, n_head = N_HEAD, factor = FACTOR, bias = True)
@@ -112,9 +113,9 @@ def main(args):
     pre_decoder.eval()
 
     optimizer = torch.optim.Adam(model.parameters(), lr=LR, weight_decay=WD)
-    scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.95, patience=10, verbose=True)
+    scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.95, patience=10)
 
-    num_epochs = 4000
+    num_epochs = args.epochs
     best_train_loss = float('inf')
 
     current_lr = optimizer.param_groups[0]['lr']
@@ -218,6 +219,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--dataname', type=str, default='adult', help='Name of dataset.')
     parser.add_argument('--gpu', type=int, default=0, help='GPU index.')
+    parser.add_argument('--epochs', type=int, default=300, help='Number of training epochs.')
     parser.add_argument('--max_beta', type=float, default=1e-2, help='Initial Beta.')
     parser.add_argument('--min_beta', type=float, default=1e-5, help='Minimum Beta.')
     parser.add_argument('--lambd', type=float, default=0.7, help='Decay of Beta.')
