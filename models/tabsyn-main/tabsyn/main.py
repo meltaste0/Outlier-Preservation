@@ -41,7 +41,7 @@ def main(args):
     )
 
     # num_epochs = 10000 + 1
-    num_epochs = 10+1
+    num_epochs = 100
 
     denoise_fn = MLPDiffusion(in_dim, 1024).to(device)
     print(denoise_fn)

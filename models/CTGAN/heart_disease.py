@@ -8,8 +8,6 @@ from sdv.single_table import CTGANSynthesizer
 
 def load_heart_disease(path: Path, max_rows: int, seed: int) -> pd.DataFrame:
 	df = pd.read_csv(path)
-
-	# Keep the label as the last column to align with comparison utilities.
 	label = "HeartDiseaseorAttack"
 	feature_cols = [col for col in df.columns if col != label]
 	df = df[feature_cols + [label]]

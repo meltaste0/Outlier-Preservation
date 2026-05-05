@@ -1,0 +1,2 @@
+outlier_recall,outlier_precision,outlier_affiliation_f1_proxy,outlier_auc_pr,outlier_auc_pr_improvement_vs_real_reference
+0.7030905077262694,0.7030905077262694,0.7030905077262694,0.7999049003880034,-0.20009509961199656

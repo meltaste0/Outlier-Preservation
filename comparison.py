@@ -356,8 +356,8 @@ def parse_args() -> EvalConfig:
 		# },
 		"heart_disease": {
 			"real": Path("Datasets\\Heart Disease\\heart_disease_cleaned.csv"),
-			"synthetic": Path("models\\CTGAN\\Fake_Datasets\\synthetic_heart_disease_ctgan.csv"),
-			"output_dir": Path("comparison_outputs\\heart_disease\\CTGAN"),
+			"synthetic": Path("models\\tabsyn-main\\synthetic\\heart_disease\\tabsyn.csv"),
+			"output_dir": Path("comparison_outputs\\heart_disease\\TabSyn"),
 			"expected_classes": (0, 1),
 		},
 	}
