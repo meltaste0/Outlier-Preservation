@@ -21,13 +21,11 @@ class EvalConfig:
 
 def _load_table(path: Path, is_real: bool) -> pd.DataFrame:
 	def _sanitize(df: pd.DataFrame) -> pd.DataFrame:
-		# Some whitespace-delimited files produce trailing all-NaN columns; remove them.
 		return df.dropna(axis=1, how="all")
 
 	na_vals = ["?"]
 	header = None if is_real else "infer"
 
-	# First attempt: infer delimiter to support comma- and whitespace-separated files.
 	try:
 		df = pd.read_csv(path, sep=None, engine="python", header=header, na_values=na_vals, skip_blank_lines=True)
 		df = _sanitize(df)
@@ -37,7 +35,6 @@ def _load_table(path: Path, is_real: bool) -> pd.DataFrame:
 	if not df.empty and df.shape[1] > 1:
 		return df
 
-	# Fallback: split on commas (with optional spaces) or runs of whitespace.
 	df = pd.read_csv(
 		path,
 		sep=r"\s*,\s*|\s+",
@@ -55,7 +52,6 @@ def _align_columns(real_df: pd.DataFrame, syn_df: pd.DataFrame) -> tuple[pd.Data
 			f"Column mismatch: real has {real_df.shape[1]} columns, synthetic has {syn_df.shape[1]} columns."
 		)
 
-	# Align synthetic columns to real indices so downstream operations are consistent.
 	syn_df = syn_df.copy()
 	syn_df.columns = list(real_df.columns)
 	return real_df, syn_df
@@ -356,8 +352,8 @@ def parse_args() -> EvalConfig:
 		# },
 		"heart_disease": {
 			"real": Path("Datasets\\Heart Disease\\heart_disease_cleaned.csv"),
-			"synthetic": Path("models\\tabsyn-main\\synthetic\\heart_disease\\tabsyn.csv"),
-			"output_dir": Path("comparison_outputs\\heart_disease\\TabSyn"),
+			"synthetic": Path("models\\CTAB-GAN-Plus\\Fake_Datasets\\Heart_Disease_Tail_Penalty\\Heart_Disease_fake_0.csv"),
+			"output_dir": Path("comparison_outputs\\heart_disease\\\CTABGAN+_Tail_Penalty"),
 			"expected_classes": (0, 1),
 		},
 	}

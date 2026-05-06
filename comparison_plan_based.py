@@ -35,13 +35,11 @@ class EvalConfig:
 
 def _load_table(path: Path, is_real: bool) -> pd.DataFrame:
 	def _sanitize(df: pd.DataFrame) -> pd.DataFrame:
-		# Some whitespace-delimited files produce trailing all-NaN columns; remove them.
 		return df.dropna(axis=1, how="all")
 
 	na_vals = ["?"]
 	header = None if is_real else "infer"
 
-	# First attempt: infer delimiter to support comma- and whitespace-separated files.
 	try:
 		df = pd.read_csv(path, sep=None, engine="python", header=header, na_values=na_vals, skip_blank_lines=True)
 		df = _sanitize(df)
@@ -51,7 +49,6 @@ def _load_table(path: Path, is_real: bool) -> pd.DataFrame:
 	if not df.empty and df.shape[1] > 1:
 		return df
 
-	# Fallback: split on commas (with optional spaces) or runs of whitespace.
 	df = pd.read_csv(
 		path,
 		sep=r"\s*,\s*|\s+",
@@ -69,7 +66,6 @@ def _align_columns(real_df: pd.DataFrame, syn_df: pd.DataFrame) -> tuple[pd.Data
 			f"Column mismatch: real has {real_df.shape[1]} columns, synthetic has {syn_df.shape[1]} columns."
 		)
 
-	# Align synthetic columns to real indices so downstream operations are consistent.
 	syn_df = syn_df.copy()
 	syn_df.columns = list(real_df.columns)
 	return real_df, syn_df
@@ -439,7 +435,7 @@ def _tstr_summary(
 
 
 def _outlier_specific_utility(real_x: pd.DataFrame, syn_x: pd.DataFrame, random_state: int) -> dict[str, float]:
-	# Create reference outlier labels from a model trained on real data.
+
 	ref = IsolationForest(
 		n_estimators=300,
 		contamination=0.05,
@@ -451,7 +447,7 @@ def _outlier_specific_utility(real_x: pd.DataFrame, syn_x: pd.DataFrame, random_
 	y_true = (ref_pred_real == -1).astype(int)
 	true_rate = float(np.mean(y_true))
 
-	# Train detector on synthetic data and apply to real data (train-on-synthetic, test-on-real).
+	# train-on-synthetic, test-on-real
 	syn_det = IsolationForest(
 		n_estimators=300,
 		contamination=max(true_rate, 1e-3),
