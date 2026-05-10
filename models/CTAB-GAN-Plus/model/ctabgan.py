@@ -23,7 +23,7 @@ class CTABGAN():
                  non_categorical_columns = [],
                  integer_columns = ['age', 'fnlwgt','capital-gain', 'capital-loss','hours-per-week'],
                  problem_type= {"Classification": "income"},
-                 tail_penalty_lambda=0.1,
+                 tail_penalty_lambda=0.05,
                  tail_penalty_quantiles=(0.05, 0.95)):
 
         self.__name__ = 'CTABGAN'
