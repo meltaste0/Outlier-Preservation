@@ -7,6 +7,7 @@
     "cat_col_idx": [0, 1, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20],
     "target_col_idx": [21],
     "file_type": "csv",
-    "data_path": "../../Datasets/Heart Disease/heart_disease_cleaned.csv",
-    "test_path": null
+    "data_path": "/root/persistent/Datasets/Heart Disease/heart_disease_cleaned.csv",
+    "test_path": null,
+    "val_path": null
 }

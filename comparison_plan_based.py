@@ -629,9 +629,9 @@ def parse_args() -> EvalConfig:
         "heart_disease": {
             "real": Path("Datasets/Heart Disease/heart_disease_cleaned.csv"),
             "synthetic": [
-                Path("models/CTAB-GAN-Plus/Fake_Datasets/Heart_Disease_Tail_Penalty/epoch20/l_0.05.csv")
+                Path("/root/persistent/models/tabsyn-main/synthetic/heart_disease/tabsyn.csv")
             ],
-            "output_dir": Path("comparison_outputs/heart_disease/CTABGAN+_Tail_Penalty/l_0.05"),
+            "output_dir": Path("/root/persistent/comparison_outputs/heart_disease/TabSyn/DSRI"),
             "expected_classes": (0, 1),
         },
     }

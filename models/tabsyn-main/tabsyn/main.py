@@ -40,8 +40,7 @@ def main(args):
         num_workers = 4,
     )
 
-    # num_epochs = 10000 + 1
-    num_epochs = 100
+    num_epochs = 10000 + 1
 
     denoise_fn = MLPDiffusion(in_dim, 1024).to(device)
     print(denoise_fn)
@@ -52,7 +51,7 @@ def main(args):
     model = Model(denoise_fn = denoise_fn, hid_dim = train_z.shape[1]).to(device)
 
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-3, weight_decay=0)
-    scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.9, patience=20)
+    scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.9, patience=20, verbose=True)
 
     model.train()
 

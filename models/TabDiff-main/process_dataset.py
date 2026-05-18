@@ -363,6 +363,7 @@ def process_data(name):
     elif name == 'diabetes_dcr':
         preprocess_diabetes_dcr()
 
+
     with open(f'{INFO_PATH}/{name}.json', 'r') as f:
         info = json.load(f)
 
@@ -388,8 +389,7 @@ def process_data(name):
     
     idx_mapping, inverse_idx_mapping, idx_name_mapping = get_column_name_mapping(data_df, num_col_idx, cat_col_idx, target_col_idx, column_names)
 
-    val_path = info.get('val_path')
-    has_val = bool(val_path)
+    has_val = bool(info['val_path'])
     val_df = pd.DataFrame(columns=data_df.columns).astype(data_df.dtypes)   # by default (val_path is not provided), set val_Df to be empty
     if info['test_path']:
 
@@ -411,6 +411,7 @@ def process_data(name):
             test_df = pd.read_csv(test_path, header = info['header'])
             
         if has_val:     # currently you cannot have a val path without a test path
+            val_path = info['val_path']
             val_df = pd.read_csv(val_path, header = info['header'])
             
         train_df = data_df
@@ -639,7 +640,8 @@ if __name__ == "__main__":
                 'beijing_dcr',
                 'news_dcr', 
                 'diabetes_dcr',
-                'heart_disease'
+                'heart_disease',
+                'arrhythmia'
             ]:    
             process_data(name)
 

@@ -65,12 +65,6 @@ def main(args):
         if ckpt_path is None:
             ckpt_parent_path = f"{curr_dir}/ckpt/{dataname}/{exp_name}"
             ckpt_path_arr = glob.glob(f"{ckpt_parent_path}/best_ema_model*")
-            if not ckpt_path_arr:
-                ckpt_path_arr = glob.glob(f"{ckpt_parent_path}/last_ema_model.pt")
-            if not ckpt_path_arr:
-                ckpt_path_arr = glob.glob(f"{ckpt_parent_path}/best_model*")
-            if not ckpt_path_arr:
-                ckpt_path_arr = glob.glob(f"{ckpt_parent_path}/last_model.pt")
             assert ckpt_path_arr, f"Cannot not infer ckpt_path from {ckpt_parent_path}, please make sure that you first train a model before testing!"
             ckpt_path = ckpt_path_arr[0]
         config_path = os.path.join(os.path.dirname(ckpt_path), 'config.pkl')

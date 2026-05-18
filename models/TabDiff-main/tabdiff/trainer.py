@@ -1,7 +1,6 @@
 import os
 import glob
 import time
-import re
 import torch
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 import numpy as np
@@ -82,14 +81,7 @@ class Trainer:
             self.diffusion.cat_schedule.load_state_dict(state_dicts['cat_schedule'])   
             print(f"Weights are loaded from {self.ckpt_path}")     
         
-        self.curr_epoch = 0
-        if self.ckpt_path is not None:
-            ckpt_name = os.path.basename(self.ckpt_path)
-            # Support epoch-suffixed checkpoints like "..._12.pt" while keeping
-            # non-epoch files such as "last_ema_model.pt" valid.
-            match = re.search(r"_(\d+)\.pt$", ckpt_name)
-            if match:
-                self.curr_epoch = int(match.group(1))
+        self.curr_epoch = int(os.path.basename(self.ckpt_path).split('_')[-1].split('.')[0]) if self.ckpt_path is not None else 0
 
     def _anneal_lr(self, step):
         frac_done = step / self.steps
@@ -107,12 +99,7 @@ class Trainer:
         dloss, closs = self.diffusion.mixed_loss(x)
 
         loss = dloss_weight * dloss + closs_weight * closs
-        if not torch.isfinite(loss):
-            self.optimizer.zero_grad(set_to_none=True)
-            return dloss.detach(), closs.detach()
-
         loss.backward()
-        torch.nn.utils.clip_grad_norm_(self.diffusion.parameters(), max_norm=1.0)
         self.optimizer.step()
 
         return dloss, closs
@@ -172,9 +159,6 @@ class Trainer:
             for batch in pbar:
                 x = batch.float().to(self.device)
                 batch_dloss, batch_closs = self._run_step(x, closs_weight, dloss_weight)
-                if not torch.isfinite(batch_dloss) or not torch.isfinite(batch_closs):
-                    print('Skipping a batch with non-finite loss to avoid corrupting training state')
-                    continue
                 curr_dloss += batch_dloss.item() * len(x)
                 curr_closs += batch_closs.item() * len(x)
                 curr_count += len(x)
@@ -305,17 +289,6 @@ class Trainer:
             self.logger.log(log_dict)
 
         end_time = time.time()
-        final_state_dicts = {
-            'denoise_fn': self.diffusion._denoise_fn.state_dict(),
-            'num_schedule': self.diffusion.num_schedule.state_dict(),
-            'cat_schedule': self.diffusion.cat_schedule.state_dict(),
-        }
-        torch.save(final_state_dicts, os.path.join(self.model_save_path, 'last_model.pt'))
-        torch.save({
-            'denoise_fn': self.ema_model.state_dict(),
-            'num_schedule': self.ema_num_schedule.state_dict(),
-            'cat_schedule': self.ema_cat_schedule.state_dict(),
-        }, os.path.join(self.model_save_path, 'last_ema_model.pt'))
         print_with_bar(f"Ending Trainnig Loop, totoal training time = {end_time - start_time}")
         self.logger.log({
             'training_time': end_time - start_time
