@@ -347,7 +347,7 @@ class CTABGANSynthesizer:
                  l2scale=1e-5,
                  batch_size=500,
                  epochs=150,
-                 tail_penalty_lambda=0.1,
+                 tail_penalty_lambda=0.05,
                  tail_penalty_quantiles=(0.05, 0.95)):
                  
 

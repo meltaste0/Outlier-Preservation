@@ -1,10 +1,6 @@
 """
-preprocessing.py
-----------------
-Shared data-loading and preparation logic for all synthesis models.
-Import this instead of duplicating column lists and transforms per model.
+preprocessing file for the GANs
 """
-
 from __future__ import annotations
 
 from pathlib import Path

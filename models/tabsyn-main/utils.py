@@ -107,7 +107,7 @@ def get_args():
     parser.add_argument('--training_batch_size', type=int, default=4096, help='batch size')
     parser.add_argument('--eval_batch_size', type=int, default=2100, help='batch size')
     parser.add_argument('--T', type=int, default=50, help='total diffusion steps')
-    parser.add_argument('--beta_1', type=float, default=0.00001, help='start beta value')
+    parser.add_argument('--beta_1', type=float, default=0.01, help='start beta value')
     parser.add_argument('--beta_T', type=float, default=0.02, help='end beta value')
     parser.add_argument('--lr_con', type=float, default=2e-03, help='target learning rate')
     parser.add_argument('--lr_dis', type=float, default=2e-03, help='target learning rate')

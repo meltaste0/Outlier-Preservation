@@ -235,7 +235,7 @@ def run_experiment(
     num_exp: int = 1,
     epochs: int = 20,
     batch_size: int = 128,
-    max_rows: int = 20000,
+    #max_rows: int = 20000,
     skip_eval: bool = False,
     privacy_data_percent: int = 5,
 ) -> None:
@@ -354,7 +354,7 @@ if __name__ == "__main__":
         "--num-exp", type=int, default=1, help="Number of train/generate runs (default: 1)"
     )
     parser.add_argument(
-        "--epochs", type=int, default=20, help="Training epochs per run (default: 20)"
+        "--epochs", type=int, default=50, help="Training epochs per run (default: 20)"
     )
     parser.add_argument("--batch-size", type=int, default=128, help="Batch size (default: 128)")
     parser.add_argument(

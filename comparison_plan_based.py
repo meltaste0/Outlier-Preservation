@@ -1,20 +1,6 @@
 """
-evaluate_synthetic.py
----------------------
 Compare original vs synthetic tabular data across quality, resemblance,
-usability, and outlier-specific metrics.
-
-Key changes vs original
------------------------
-* _load_table: header is always inferred (header=None was treating the
-  column-name row as a data row, silently corrupting real-data statistics).
-* _validity_summary: binary check now uses ~ instead of == False to avoid
-  pandas boolean-comparison edge cases.
-* summary metrics: ks_pvalue_mean replaced with ks_sig_feature_rate
-  (proportion of features with p < 0.05), which is statistically meaningful.
-* --synthetic accepts multiple paths so multi-run averaging is consistent
-  across all models.
-* Default paths updated to reflect the shared Fake_Datasets folder structure.
+usability, and outlier-specific metrics as defined in my thesis paper.
 """
 
 from __future__ import annotations
@@ -45,16 +31,16 @@ from sklearn.preprocessing import LabelEncoder, StandardScaler
 @dataclass
 class EvalConfig:
     real_path: Path
-    synthetic_paths: list[Path]          # supports multi-run averaging
+    synthetic_paths: list[Path]         
     output_dir: Path
     class_index: int = -1
     expected_classes: tuple[int, ...] | None = None
     random_state: int = 42
 
 
-# ---------------------------------------------------------------------------
+
 # I/O helpers
-# ---------------------------------------------------------------------------
+
 
 def _load_table(path: Path) -> pd.DataFrame:
     """Load a CSV with a proper header row (first row = column names)."""
@@ -115,12 +101,12 @@ def _impute_with_real_medians(
     real_x: pd.DataFrame, syn_x: pd.DataFrame
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     medians = real_x.median(numeric_only=True)
-    return real_x.fillna(medians), syn_x.fillna(medians)
+    return real_x.fillna(medians).fillna(0), syn_x.fillna(medians).fillna(0)
 
 
-# ---------------------------------------------------------------------------
+
 # Label helpers
-# ---------------------------------------------------------------------------
+
 
 def _clean_labels(s: pd.Series) -> pd.Series:
     clean = s.astype(str).str.strip()
@@ -136,7 +122,7 @@ def _encode_labels(
 
     joint = pd.concat([r_clean.dropna(), s_clean.dropna()]).astype(str)
     if joint.empty:
-        raise ValueError("Label column has no valid values after cleaning.")
+        raise ValueError("Label column has no valid values after cleaning")
 
     le = LabelEncoder()
     le.fit(joint)
@@ -152,9 +138,9 @@ def _encode_labels(
     return r_enc, s_enc
 
 
-# ---------------------------------------------------------------------------
+
 # Per-metric table builders
-# ---------------------------------------------------------------------------
+
 
 def _class_distribution_table(
     real_y: pd.Series,
@@ -322,7 +308,6 @@ def _validity_summary(
         if set(real_x[col].dropna().unique().tolist()).issubset({0, 1})
         and len(real_x[col].dropna()) > 0
     ]
-    # Fix: use ~ instead of == False to avoid pandas boolean-comparison issues
     bin_invalid = float((~syn_x[binary_cols].isin([0, 1])).mean().mean()) if binary_cols else 0.0
 
     return {
@@ -465,9 +450,9 @@ def _outlier_specific_utility(
     }
 
 
-# ---------------------------------------------------------------------------
-# Core evaluation runner (single synthetic file)
-# ---------------------------------------------------------------------------
+
+# CORE evaluation 
+
 
 def _evaluate_one(
     real_df: pd.DataFrame,
@@ -502,8 +487,6 @@ def _evaluate_one(
         "mean_abs_spearman_corr_diff": _mean_abs_corr_diff(real_x, syn_x),
         "ks_stat_mean": float(np.nanmean(ks_tbl["ks_statistic"].to_numpy())),
         "ks_stat_max": float(np.nanmax(ks_tbl["ks_statistic"].to_numpy())),
-        # Replaced ks_pvalue_mean (averaging p-values is not statistically valid)
-        # with the proportion of features that are significantly different (p < 0.05).
         "ks_sig_feature_rate": float((ks_tbl["p_value"] < 0.05).mean()),
     }
     summary.update(_multivariate_outlier_summary(real_x, syn_x, config.random_state))
@@ -569,7 +552,7 @@ def run_evaluation(config: EvalConfig) -> None:
         all_uni_out_tbls.append(uni_out_tbl)
         all_ks_tbls.append(ks_tbl)
 
-    # --- Average across runs ---
+    # avg across runs 
     keys = list(all_summaries[0].keys())
     avg_summary = {
         k: float(np.nanmean([s[k] for s in all_summaries])) for k in keys
@@ -577,26 +560,24 @@ def run_evaluation(config: EvalConfig) -> None:
 
     config.output_dir.mkdir(parents=True, exist_ok=True)
 
-    # Save per-feature tables from the first run (or average numeric cols if multi-run)
     all_class_tbls[0].to_csv(config.output_dir / "class_distribution_comparison.csv")
     all_tail_tbls[0].to_csv(config.output_dir / "tail_quantile_comparison.csv", index=False)
     all_uni_out_tbls[0].to_csv(config.output_dir / "univariate_outlier_comparison.csv", index=False)
     all_ks_tbls[0].to_csv(config.output_dir / "ks_feature_comparison.csv", index=False)
 
-    # Save averaged scalar metrics
     pd.DataFrame([avg_summary]).to_csv(config.output_dir / "summary_metrics.csv", index=False)
     pd.DataFrame(all_summaries).to_csv(config.output_dir / "per_run_summary_metrics.csv", index=False)
 
-    print("=== Summary Metrics (averaged across runs) ===")
+    print("Summary Metrics (averaged across runs) ")
     for k, v in avg_summary.items():
         print(f"{k}: {'NaN' if pd.isna(v) else f'{v:.6f}'}")
 
     print("\nSaved outputs to:", config.output_dir)
 
 
-# ---------------------------------------------------------------------------
+
 # CLI
-# ---------------------------------------------------------------------------
+
 
 def parse_args() -> EvalConfig:
     parser = argparse.ArgumentParser(
@@ -607,7 +588,7 @@ def parse_args() -> EvalConfig:
     )
     parser.add_argument(
         "--dataset",
-        choices=["arrhythmia", "thyroid", "heart_disease"],
+        choices=["thyroid", "heart_disease", "breast_cancer"],
         default="heart_disease",
         help="Dataset profile for default paths",
     )
@@ -626,12 +607,12 @@ def parse_args() -> EvalConfig:
     args = parser.parse_args()
 
     dataset_defaults: dict[str, dict] = {
-        "heart_disease": {
-            "real": Path("Datasets/Heart Disease/heart_disease_cleaned.csv"),
+        "thyroid": {
+            "real": Path("Datasets/Thyroid/thyroid_binary_combined.csv"),
             "synthetic": [
-                Path("/root/persistent/models/tabsyn-main/synthetic/heart_disease/tabsyn.csv")
+                Path("models/tabsyn-main/synthetic/thyroid/tabsyn.csv")
             ],
-            "output_dir": Path("/root/persistent/comparison_outputs/heart_disease/TabSyn/DSRI"),
+            "output_dir": Path("comparison_outputs/thyroid/TabSyn"),
             "expected_classes": (0, 1),
         },
     }

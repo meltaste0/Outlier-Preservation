@@ -1,0 +1,188 @@
+{
+    "name": "breast_cancer",
+    "task_type": "binclass",
+    "header": "infer",
+    "column_names": [
+        "Age",
+        "Race",
+        "Marital Status",
+        "T Stage ",
+        "N Stage",
+        "6th Stage",
+        "differentiate",
+        "Grade",
+        "Tumor Size",
+        "Estrogen Status",
+        "Progesterone Status",
+        "Regional Node Examined",
+        "Reginol Node Positive",
+        "Survival Months",
+        "Status",
+        "A Stage"
+    ],
+    "num_col_idx": [
+        0,
+        8,
+        11,
+        12,
+        13
+    ],
+    "cat_col_idx": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        9,
+        10,
+        14
+    ],
+    "target_col_idx": [
+        15
+    ],
+    "file_type": "csv",
+    "raw_data_path": "data/breast_cancer/breast_cancer.csv",
+    "data_path": "data/breast_cancer/breast_cancer.csv",
+    "test_path": null,
+    "val_path": null,
+    "column_info": {
+        "0": {},
+        "type": "categorical",
+        "max": 107.0,
+        "min": 1.0,
+        "8": {},
+        "11": {},
+        "12": {},
+        "13": {},
+        "1": {},
+        "categorizes": [
+            "Distant",
+            "Regional"
+        ],
+        "2": {},
+        "3": {},
+        "4": {},
+        "5": {},
+        "6": {},
+        "7": {},
+        "9": {},
+        "10": {},
+        "14": {},
+        "15": {}
+    },
+    "train_num": 3621,
+    "test_num": 403,
+    "idx_mapping": {
+        "0": 0,
+        "1": 5,
+        "2": 6,
+        "3": 7,
+        "4": 8,
+        "5": 9,
+        "6": 10,
+        "7": 11,
+        "8": 1,
+        "9": 12,
+        "10": 13,
+        "11": 2,
+        "12": 3,
+        "13": 4,
+        "14": 14,
+        "15": 15
+    },
+    "inverse_idx_mapping": {
+        "0": 0,
+        "5": 1,
+        "6": 2,
+        "7": 3,
+        "8": 4,
+        "9": 5,
+        "10": 6,
+        "11": 7,
+        "1": 8,
+        "12": 9,
+        "13": 10,
+        "2": 11,
+        "3": 12,
+        "4": 13,
+        "14": 14,
+        "15": 15
+    },
+    "idx_name_mapping": {
+        "0": "Age",
+        "1": "Race",
+        "2": "Marital Status",
+        "3": "T Stage ",
+        "4": "N Stage",
+        "5": "6th Stage",
+        "6": "differentiate",
+        "7": "Grade",
+        "8": "Tumor Size",
+        "9": "Estrogen Status",
+        "10": "Progesterone Status",
+        "11": "Regional Node Examined",
+        "12": "Reginol Node Positive",
+        "13": "Survival Months",
+        "14": "Status",
+        "15": "A Stage"
+    },
+    "metadata": {
+        "columns": {
+            "0": {
+                "sdtype": "numerical",
+                "computer_representation": "Float"
+            },
+            "8": {
+                "sdtype": "numerical",
+                "computer_representation": "Float"
+            },
+            "11": {
+                "sdtype": "numerical",
+                "computer_representation": "Float"
+            },
+            "12": {
+                "sdtype": "numerical",
+                "computer_representation": "Float"
+            },
+            "13": {
+                "sdtype": "numerical",
+                "computer_representation": "Float"
+            },
+            "1": {
+                "sdtype": "categorical"
+            },
+            "2": {
+                "sdtype": "categorical"
+            },
+            "3": {
+                "sdtype": "categorical"
+            },
+            "4": {
+                "sdtype": "categorical"
+            },
+            "5": {
+                "sdtype": "categorical"
+            },
+            "6": {
+                "sdtype": "categorical"
+            },
+            "7": {
+                "sdtype": "categorical"
+            },
+            "9": {
+                "sdtype": "categorical"
+            },
+            "10": {
+                "sdtype": "categorical"
+            },
+            "14": {
+                "sdtype": "categorical"
+            },
+            "15": {
+                "sdtype": "categorical"
+            }
+        }
+    }
+}

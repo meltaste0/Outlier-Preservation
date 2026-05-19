@@ -641,7 +641,9 @@ if __name__ == "__main__":
                 'news_dcr', 
                 'diabetes_dcr',
                 'heart_disease',
-                'arrhythmia'
+                'arrhythmia',
+                'thyroid',
+                'breast_cancer'
             ]:    
             process_data(name)
 
