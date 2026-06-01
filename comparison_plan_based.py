@@ -28,12 +28,39 @@ from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 
 
+THYROID_COLUMNS = [
+    "age",
+    "symptom_1",
+    "symptom_2",
+    "symptom_3",
+    "symptom_4",
+    "symptom_5",
+    "symptom_6",
+    "symptom_7",
+    "symptom_8",
+    "symptom_9",
+    "symptom_10",
+    "symptom_11",
+    "symptom_12",
+    "symptom_13",
+    "symptom_14",
+    "symptom_15",
+    "TSH",
+    "T3",
+    "T4",
+    "T3_uptake",
+    "FTI",
+    "thyroid_class",
+]
+
+
 @dataclass
 class EvalConfig:
     real_path: Path
     synthetic_paths: list[Path]         
     output_dir: Path
     class_index: int = -1
+    class_column: str | None = None
     expected_classes: tuple[int, ...] | None = None
     random_state: int = 42
 
@@ -60,6 +87,16 @@ def _load_table(path: Path) -> pd.DataFrame:
         df = pd.DataFrame()
 
     if not df.empty and df.shape[1] > 1:
+        if path.name == "thyroid_binary_combined.csv" and len(df.columns) == len(THYROID_COLUMNS):
+            numeric_like = True
+            for column in df.columns:
+                try:
+                    float(column)
+                except (TypeError, ValueError):
+                    numeric_like = False
+                    break
+            if numeric_like:
+                df.columns = THYROID_COLUMNS
         return df
 
     # Fallback for whitespace-delimited files
@@ -71,6 +108,16 @@ def _load_table(path: Path) -> pd.DataFrame:
         na_values=na_vals,
         skip_blank_lines=True,
     )
+    if path.name == "thyroid_binary_combined.csv" and len(df.columns) == len(THYROID_COLUMNS):
+        numeric_like = True
+        for column in df.columns:
+            try:
+                float(column)
+            except (TypeError, ValueError):
+                numeric_like = False
+                break
+        if numeric_like:
+            df.columns = THYROID_COLUMNS
     return _sanitize(df)
 
 
@@ -85,9 +132,23 @@ def _align_columns(real_df: pd.DataFrame, syn_df: pd.DataFrame) -> tuple[pd.Data
     return real_df, syn_df
 
 
+def _resolve_class_index(df: pd.DataFrame, class_index: int, class_column: str | None) -> int:
+    if class_column is not None:
+        target = class_column.strip().casefold()
+        for idx, column in enumerate(df.columns):
+            if str(column).strip().casefold() == target:
+                return idx
+        raise ValueError(
+            f"Class column '{class_column}' was not found. Available columns: {list(df.columns)}"
+        )
+
+    return class_index
+
+
 def _split_features_and_class(
-    df: pd.DataFrame, class_index: int
+    df: pd.DataFrame, class_index: int, class_column: str | None = None
 ) -> tuple[pd.DataFrame, pd.Series]:
+    class_index = _resolve_class_index(df, class_index, class_column)
     class_series = df.iloc[:, class_index]
     feature_df = df.drop(df.columns[class_index], axis=1)
     return feature_df, class_series
@@ -461,8 +522,8 @@ def _evaluate_one(
 ) -> dict[str, float]:
     real_df, syn_df = _align_columns(real_df, syn_df)
 
-    real_x_raw, real_y = _split_features_and_class(real_df, config.class_index)
-    syn_x_raw, syn_y = _split_features_and_class(syn_df, config.class_index)
+    real_x_raw, real_y = _split_features_and_class(real_df, config.class_index, config.class_column)
+    syn_x_raw, syn_y = _split_features_and_class(syn_df, config.class_index, config.class_column)
 
     real_x = _to_numeric_frame(real_x_raw)
     syn_x = _to_numeric_frame(syn_x_raw)
@@ -512,8 +573,8 @@ def run_evaluation(config: EvalConfig) -> None:
         syn_df = _load_table(syn_path)
         real_aligned, syn_aligned = _align_columns(real_df.copy(), syn_df)
 
-        real_x_raw, real_y = _split_features_and_class(real_aligned, config.class_index)
-        syn_x_raw, syn_y = _split_features_and_class(syn_aligned, config.class_index)
+        real_x_raw, real_y = _split_features_and_class(real_aligned, config.class_index, config.class_column)
+        syn_x_raw, syn_y = _split_features_and_class(syn_aligned, config.class_index, config.class_column)
         real_x = _to_numeric_frame(real_x_raw)
         syn_x = _to_numeric_frame(syn_x_raw)
         real_x, syn_x = _impute_with_real_medians(real_x, syn_x)
@@ -603,17 +664,36 @@ def parse_args() -> EvalConfig:
     parser.add_argument("--output-dir", type=Path, default=None)
     parser.add_argument("--expected-classes", type=int, nargs="*", default=None)
     parser.add_argument("--class-index", type=int, default=-1)
+    parser.add_argument("--class-column", type=str, default=None)
     parser.add_argument("--random-state", type=int, default=42)
     args = parser.parse_args()
 
     dataset_defaults: dict[str, dict] = {
-        "thyroid": {
-            "real": Path("Datasets/Thyroid/thyroid_binary_combined.csv"),
+        "heart_disease": {
+            "real": Path("Datasets/Heart Disease/heart_disease_cleaned.csv"),
             "synthetic": [
-                Path("models/tabsyn-main/synthetic/thyroid/tabsyn.csv")
+                Path("models/CTGAN/Fake_Datasets/Heart_Disease/synthetic_heart_disease_ctgan.csv")
             ],
-            "output_dir": Path("comparison_outputs/thyroid/TabSyn"),
+            "output_dir": Path("comparison_outputs/heart_disease/CTGAN 50epoch"),
             "expected_classes": (0, 1),
+            "class_column": "HeartDiseaseorAttack",
+        },
+        "thyroid": {
+            "real": Path("models\OG-CTAB-GAN-Plus-main\\Real_Datasets\\Thyroid.csv"),
+            "synthetic": [
+                Path("models\\OG-CTAB-GAN-Plus-main\\Fake_Datasets\\Thyroid_epoch50\\Thyroid_fake_0.csv")
+            ],
+            "output_dir": Path("comparison_outputs/thyroid/OG CTAB-GAN-PLUS 50epoch"),
+            "expected_classes": (0, 1),
+        },
+        "breast_cancer": {
+            "real": Path("Datasets/Breast Cancer/breast_cancer_cleaned.csv"),
+            "synthetic": [
+                Path("models\\CTAB-GAN-Plus\\Fake_Datasets\\With_Tail_Penalty_0.05\\Breast_Cancer\\synthetic_breast_cancer_ctabgan.csv")
+            ],
+            "output_dir": Path("comparison_outputs\\breast_cancer\\trying_smth_TP"),
+            "expected_classes": None,
+            "class_column": "A Stage",
         },
     }
 
@@ -621,6 +701,7 @@ def parse_args() -> EvalConfig:
     real_path = args.real if args.real is not None else defaults["real"]
     synthetic_paths = args.synthetic if args.synthetic is not None else defaults["synthetic"]
     output_dir = args.output_dir if args.output_dir is not None else defaults["output_dir"]
+    class_column = args.class_column if args.class_column is not None else defaults.get("class_column")
     expected = (
         defaults["expected_classes"] if args.expected_classes is None
         else (None if len(args.expected_classes) == 0 else tuple(args.expected_classes))
@@ -631,6 +712,7 @@ def parse_args() -> EvalConfig:
         synthetic_paths=list(synthetic_paths),
         output_dir=output_dir,
         class_index=args.class_index,
+        class_column=class_column,
         expected_classes=expected,
         random_state=args.random_state,
     )

@@ -20,6 +20,40 @@ This is particularly important for evaluating generators like CTGAN (Conditional
 
 ---
 
+## CTAB-GAN+ Tail Penalty
+
+This repository also uses a CTAB-GAN+ variant with a tail penalty for the Heart Disease dataset. The purpose of this term is to reduce unrealistic extreme values in synthetic continuous features without hard-clipping the generator output.
+
+### Methods Description
+
+The tail penalty is a soft regularizer that measures whether each generated continuous value stays inside a plausible range learned from the real data. Instead of only training the generator to fool the discriminator, the model also checks whether the generated value falls inside the central support of the training distribution.
+
+For every continuous feature, the training data is used to compute two quantiles, by default the 5th and 95th percentiles. These quantiles define a feature-specific band that captures the typical range of the real data while still allowing the tails to remain somewhat flexible. During training, each generated continuous value is reconstructed back into the original feature scale and compared against that band. Values inside the band incur no penalty. Values below the lower bound or above the upper bound are penalized in proportion to how far they fall outside the interval.
+
+This design improves tail fidelity in a controlled way. It does not force the generator to exactly match the real minimum and maximum, and it does not suppress legitimate rare values entirely. Instead, it nudges the synthetic distribution to keep its extremes realistic and consistent with the observed real-data tails.
+
+### Implementation Details
+
+The implementation lives in `models/CTAB-GAN-Plus/model/synthesizer/ctabgan_synthesizer.py`. The key configuration options are:
+
+- `tail_penalty_lambda=0.1`: weight of the tail penalty in the generator loss.
+- `tail_penalty_quantiles=(0.05, 0.95)`: lower and upper quantiles used to define the acceptable range.
+
+The code first builds a per-feature specification table from the transformed training data. For each continuous column, it stores the quantile bounds and the information needed to reconstruct the generated output in the original scale. Two reconstruction paths are used:
+
+- General continuous columns are mapped from the generator output `u` back to the original domain using the feature minimum and maximum.
+- Mixture-based continuous columns are reconstructed using the generator output together with the learned component probabilities, means, and standard deviations.
+
+The penalty for one feature is computed as:
+
+`max(0, lower - x_hat) + max(0, x_hat - upper)`
+
+where `x_hat` is the reconstructed synthetic value. The final penalty is the mean of these per-feature values. In generator training, the term is multiplied by `tail_penalty_lambda` and added to the adversarial loss together with the conditional loss.
+
+In the Heart Disease script, the configured run uses `tail_penalty_lambda = 0.1` and the 5th/95th percentile band. That makes the penalty strong enough to steer the generator away from implausible extremes, while still leaving the GAN objective as the main training signal.
+
+---
+
 ## Key Components & Their Role in Outlier Statistics
 
 ### 1. **Data Loading & Preprocessing**

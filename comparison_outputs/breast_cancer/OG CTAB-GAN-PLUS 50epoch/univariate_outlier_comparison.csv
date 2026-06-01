@@ -1,0 +1,16 @@
+feature,real_outlier_rate,synthetic_outlier_rate,abs_rate_diff
+Age,0.0,0.0,0.0
+Race,0.0,0.0,0.0
+Marital Status,0.0,0.0,0.0
+T Stage ,0.0,0.0,0.0
+N Stage,0.0,0.0,0.0
+6th Stage,0.0,0.0,0.0
+differentiate,0.0,0.0,0.0
+Grade,0.0,0.0,0.0
+Tumor Size,0.055168986083499,0.15879721669980118,0.10362823061630218
+Estrogen Status,0.0,0.0,0.0
+Progesterone Status,0.0,0.0,0.0
+Regional Node Examined,0.017892644135188866,0.009443339960238568,0.008449304174950299
+Reginol Node Positive,0.08548707753479125,0.19060636182902585,0.1051192842942346
+Survival Months,0.0044731610337972166,0.0004970178926441351,0.003976143141153081
+Status,0.0,0.0,0.0
