@@ -82,7 +82,7 @@ def main():
     tmp_csv.parent.mkdir(parents=True, exist_ok=True)
     df.to_csv(tmp_csv, index=False)
 
-    print(f"Training CTAB-GAN+ on Thyroid: rows={len(df)}, epochs=50, batch_size=128")
+    print(f"Training CTAB-GAN+ on Thyroid: rows={len(df)}, epochs=300, batch_size=128")
     print(f"Class distribution:\n{df[LABEL_COL].value_counts()}")
 
     synthesizer = CTABGAN(

@@ -10,7 +10,7 @@ from model.ctabgan import CTABGAN
 SCRIPT_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = SCRIPT_DIR.parent.parent
 REAL_CSV = PROJECT_ROOT / "Datasets" / "Breast Cancer" / "breast_cancer_cleaned.csv"
-OUTPUT_CSV = SCRIPT_DIR / "Fake_Datasets" / "Breast_Cancer" / "synthetic_breast_cancer_ctabgan.csv"
+OUTPUT_CSV = SCRIPT_DIR / "Fake_Datasets" / "Breast_Cancer" / "synthetic_breast_cancer_ctabgan_300epoch.csv"
 
 CATEGORICAL_COLS = [
     "Race", "Marital Status", "T Stage ", "N Stage", "6th Stage",
@@ -55,8 +55,8 @@ def main():
         integer_columns=INTEGER_COLS,
         problem_type={"Classification": LABEL_COL}
     )
-    synthesizer.synthesizer.epochs = 50
-    synthesizer.synthesizer.batch_size = 128
+    synthesizer.synthesizer.epochs = 300
+    synthesizer.synthesizer.batch_size = 4096
     print(synthesizer.synthesizer.tail_penalty_lambda)
 
     synthesizer.fit()

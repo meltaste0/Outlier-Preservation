@@ -1,8 +1,3 @@
-"""
-CTAB-GAN+ training script for Breast Cancer (SEER) dataset.
-Target column: 'A Stage' (Regional vs Distant)
-"""
-
 from pathlib import Path
 import pandas as pd
 from model.ctabgan import CTABGAN
@@ -10,7 +5,8 @@ from model.ctabgan import CTABGAN
 SCRIPT_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = SCRIPT_DIR.parent.parent
 REAL_CSV = PROJECT_ROOT / "Datasets" / "Breast Cancer" / "breast_cancer_cleaned.csv"
-OUTPUT_CSV = SCRIPT_DIR / "Fake_Datasets" / "Breast_Cancer" / "synthetic_breast_cancer_ctabgan.csv"
+OUTPUT_CSV = SCRIPT_DIR / "Fake_Datasets" / "Breast_Cancer" / "synthetic_breast_cancer_ctabgan_epoch100.csv"
+
 
 CATEGORICAL_COLS = [
     "Race", "Marital Status", "T Stage ", "N Stage", "6th Stage",
@@ -55,7 +51,7 @@ def main():
         integer_columns=INTEGER_COLS,
         problem_type={"Classification": LABEL_COL}
     )
-    synthesizer.synthesizer.epochs = 50
+    synthesizer.synthesizer.epochs = 100
     synthesizer.synthesizer.batch_size = 128
 
 

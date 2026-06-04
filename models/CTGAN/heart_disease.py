@@ -63,9 +63,10 @@ def main():
     print("\nTraining CTGAN...")
     synthesizer = CTGANSynthesizer(
         metadata,
-        epochs=50,
+        epochs=100,
         batch_size=500,
         verbose=True,
+        cuda=True,
     )
     synthesizer.fit(data)
     
@@ -74,7 +75,7 @@ def main():
     synthetic_data = synthesizer.sample(num_rows=len(data))
     
     # Save output
-    output_path = script_dir / "Fake_Datasets" / "Heart_Disease" / "synthetic_heart_disease_ctgan.csv"
+    output_path = script_dir / "Fake_Datasets" / "Heart_Disease" / "synthetic_heart_disease_ctgan_100epochs.csv"
     output_path.parent.mkdir(parents=True, exist_ok=True)
     synthetic_data.to_csv(output_path, index=False)
     

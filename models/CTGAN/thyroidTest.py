@@ -1,6 +1,5 @@
 """
-CTGAN training script for Thyroid dataset.
-Simple and minimal — loads thyroid_binary_combined.csv, trains CTGAN, saves synthetic output.
+CTGAN training script for Thyroid dataset
 """
 
 from pathlib import Path
@@ -30,26 +29,23 @@ def main():
     print(f"Data shape: {data.shape}")
     print(f"Columns: {data.columns.tolist()}")
     
-    # Detect metadata
     metadata = Metadata.detect_from_dataframe(data)
     
-    # Train CTGAN
+   
     print("\nTraining CTGAN...")
     synthesizer = CTGANSynthesizer(
         metadata,
-        epochs=50,
+        epochs=100,
         batch_size=500,
         verbose=True,
     )
     synthesizer.fit(data)
     
-    # Generate synthetic data
     print("\nGenerating synthetic samples...")
     num_real = len(data)
     synthetic_data = synthesizer.sample(num_rows=num_real)
     
-    # Save output
-    output_path = script_dir / "Fake_Datasets" / "Thyroid" / "synthetic_thyroid.csv"
+    output_path = script_dir / "Fake_Datasets" / "Thyroid" / "synthetic_thyroid_ctgan_100epochs.csv"
     output_path.parent.mkdir(parents=True, exist_ok=True)
     synthetic_data.to_csv(output_path, index=False)
     

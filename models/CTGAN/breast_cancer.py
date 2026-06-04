@@ -10,7 +10,6 @@ from sdv.single_table import CTGANSynthesizer
 from sdv.metadata import Metadata
 
 
-# Define column names after cleaning (as they appear in your CSV)
 COLUMN_NAMES = [
     "Age",
     "Race",
@@ -27,10 +26,9 @@ COLUMN_NAMES = [
     "Regional_Node_Positive",
     "Survival_Months",
     "Status",
-    "A_Stage",          # target: Regional (0) / Distant (1)
+    "A_Stage",          # target: regional (0) / distant (1)
 ]
 
-# Categorical columns (exclude purely numeric ones)
 CATEGORICAL_COLS = [
     "Race",
     "Marital_Status",
@@ -42,7 +40,7 @@ CATEGORICAL_COLS = [
     "Estrogen_Status",
     "Progesterone_Status",
     "Status",
-    "A_Stage",          # target is categorical
+    "A_Stage",         # target is categorical
 ]
 
 NUMERIC_COLS = [
@@ -68,47 +66,38 @@ def main():
     print(f"Loading: {data_path}")
     data = pd.read_csv(data_path)
     
-    # Ensure column names are clean (replace spaces in original header)
     data.columns = COLUMN_NAMES
     
-    # Convert target to string (required by SDV for categorical)
     data[TARGET_COL] = data[TARGET_COL].astype(str)
     
-    # Convert other categorical columns to string
     for col in CATEGORICAL_COLS:
         if col in data.columns:
             data[col] = data[col].astype(str)
     
-    # Convert numeric columns to float (ensure no strings)
     for col in NUMERIC_COLS:
         if col in data.columns:
             data[col] = pd.to_numeric(data[col], errors='coerce')
     
-    # Drop any rows with missing values (simple approach)
     data = data.dropna()
     
     print(f"Data shape after cleaning: {data.shape}")
     print(f"Class distribution:\n{data[TARGET_COL].value_counts()}")
     
-    # Detect metadata automatically
     metadata = Metadata.detect_from_dataframe(data)
     
-    # Train CTGAN
     print("\nTraining CTGAN...")
     synthesizer = CTGANSynthesizer(
         metadata,
-        epochs=50,
+        epochs=100,
         batch_size=500,
         verbose=True,
     )
     synthesizer.fit(data)
     
-    # Generate synthetic data (same number of rows as original)
     print("\nGenerating synthetic samples...")
     synthetic_data = synthesizer.sample(num_rows=len(data))
     
-    # Save output
-    output_path = script_dir / "Fake_Datasets" / "Breast_Cancer" / "synthetic_breast_cancer_ctgan.csv"
+    output_path = script_dir / "Fake_Datasets" / "Breast_Cancer" / "synthetic_breast_cancer_ctgan_100epochs.csv"
     output_path.parent.mkdir(parents=True, exist_ok=True)
     synthetic_data.to_csv(output_path, index=False)
     
