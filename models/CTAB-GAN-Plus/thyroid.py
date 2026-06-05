@@ -68,7 +68,7 @@ def prepare_thyroid_dataset(
 
 def run_experiment(
     num_exp: int = 1,
-    epochs: int = 100,
+    epochs: int = 300,
     #batch_size: int = 128,
     batch_size: int = 4096,
     max_rows: int = 0,
@@ -92,7 +92,7 @@ def run_experiment(
         )
     
     real_path = script_dir / "Real_Datasets" / "Thyroid.csv"
-    fake_dir = script_dir / "Fake_Datasets" / "Thyroid"/"0.01"/"synthetic_thyroid_ctabgan_100epoch.csv"
+    fake_dir = script_dir / "Fake_Datasets" / "Thyroid"/"0.01"/"synthetic_thyroid_ctabgan_300epoch.csv"
     
 
     fake_dir.mkdir(parents=True, exist_ok=True)
