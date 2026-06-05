@@ -10,7 +10,8 @@ from model.ctabgan import CTABGAN
 SCRIPT_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = SCRIPT_DIR.parent.parent
 REAL_CSV = PROJECT_ROOT / "Datasets" / "Breast Cancer" / "breast_cancer_cleaned.csv"
-OUTPUT_CSV = SCRIPT_DIR / "Fake_Datasets" / "Breast_Cancer" / "synthetic_breast_cancer_ctabgan_300epoch.csv"
+OUTPUT_CSV = SCRIPT_DIR / "Fake_Datasets" / "Breast_Cancer" / "0.5" /"synthetic_breast_cancer_ctabgan_100epoch.csv"
+
 
 CATEGORICAL_COLS = [
     "Race", "Marital Status", "T Stage ", "N Stage", "6th Stage",
@@ -41,7 +42,6 @@ def main():
     tmp_csv.parent.mkdir(parents=True, exist_ok=True)
     df.to_csv(tmp_csv, index=False)
 
-    print(f"Training CTAB-GAN+ on Breast Cancer: rows={len(df)}, epochs=50, batch_size=128")
     print(f"Class distribution:\n{df[LABEL_COL].value_counts()}")
 
     synthesizer = CTABGAN(
@@ -55,7 +55,7 @@ def main():
         integer_columns=INTEGER_COLS,
         problem_type={"Classification": LABEL_COL}
     )
-    synthesizer.synthesizer.epochs = 300
+    synthesizer.synthesizer.epochs = 100
     synthesizer.synthesizer.batch_size = 4096
     print(synthesizer.synthesizer.tail_penalty_lambda)
 

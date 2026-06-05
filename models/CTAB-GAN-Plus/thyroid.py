@@ -92,7 +92,8 @@ def run_experiment(
         )
     
     real_path = script_dir / "Real_Datasets" / "Thyroid.csv"
-    fake_dir = script_dir / "Fake_Datasets" / "Thyroid"/ "synthetic_thyroid_ctabgan_100epoch.csv"
+    fake_dir = script_dir / "Fake_Datasets" / "Thyroid"/"0.01"/"synthetic_thyroid_ctabgan_100epoch.csv"
+    
 
     fake_dir.mkdir(parents=True, exist_ok=True)
     
