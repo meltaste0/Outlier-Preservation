@@ -23,6 +23,7 @@
 	- `python -m pip install -r requirements.txt`
 
 ## Notes
+#THE DIFFUSION MODELS WERE TOO BIG, SO GO TO END OF README AND CLONE MAIN FROM TABSYN AND TABDIFF AND ADD TO models/
 
 - Use `-r` when installing from `requirements.txt`.
 - The CTAB-GAN-Plus environment must use Python 3.8 for pinned dependency compatibility.
@@ -77,4 +78,14 @@ Measures:
 7. Usability (TSTR) – logistic regression trained on synthetic data and tested on real data, reporting accuracy, F1, and AUROC.
 
 8. Outlier‑specific utility – an Isolation Forest trained on synthetic data is used to detect anomalies in real data; recall, AUPRC, and improvement over a reference detector are measured.
+
+### Summary table helper
+
+Use `summary_metrics_table.py` to turn any `summary_metrics.csv` under `comparison_outputs` into a readable table:
+
+```powershell
+python summary_metrics_table.py "comparison_outputs/heart_disease/CTABGAN+_Tail_Penalty/100 epochs/0.1/summary_metrics.csv"
+```
+
+You can also pass a directory that contains `summary_metrics.csv`, or add `--output report.md` to save the table as Markdown.
  
